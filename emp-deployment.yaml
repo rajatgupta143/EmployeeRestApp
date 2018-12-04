@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: empapp-deployment
+spec:
+  selector:
+    matchLabels:
+      app: empapp
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: empapp
+    spec:
+      containers:
+      - name: empapp
+    # enter the path to your image, be sure to include the correct region prefix    
+        image: iad.ocir.io/gse00014433/restapp/employeedockerapp:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+    # enter the name of the secret you created  
+      - name: ocirsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: empapp-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: empapp
